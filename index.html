@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<title>CHIN-SU × FPT Telecom</title>
+<style>
+:root{color-scheme:light; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0; font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+/* Layout: dải thiên hà dọc — rail chòm sao bên trái, các vùng nội dung trôi trên nền sâu, một lớp sao Canvas phía sau */
+:root{
+  --void:#05070F; --deep:#0A0E1F; --surface:#0E1428; --surface2:#141C36;
+  --line:rgba(255,255,255,.10); --line-hi:rgba(255,255,255,.22);
+  --ink:#EDF0FB; --dim:#97A1C2; --faint:#636D92;
+  --accent:#FF6A3D; --violet:#8B6CFF; --cyan:#3FD9D0; --star:#FFE4A8;
+  --good:#45D189; --warn:#FFC24B; --crit:#FF5C7A;
+  --fd:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fn:"Space Grotesk",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--void); color:var(--ink);
+  font-family:var(--fd); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+#sky{position:fixed; inset:0; z-index:0; pointer-events:none}
+.neb{position:fixed; z-index:0; pointer-events:none; filter:blur(70px); opacity:.55}
+.neb1{top:-160px; left:-120px; width:620px; height:620px;
+  background:radial-gradient(circle,rgba(139,108,255,.55),transparent 68%)}
+.neb2{top:38%; right:-200px; width:700px; height:700px;
+  background:radial-gradient(circle,rgba(255,106,61,.38),transparent 68%)}
+.neb3{bottom:-240px; left:18%; width:680px; height:680px;
+  background:radial-gradient(circle,rgba(63,217,208,.28),transparent 70%)}
+.wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 72px}
+
+/* ——— rail chòm sao ——— */
+.rail{position:fixed; left:max(14px,env(safe-area-inset-left,0px)); top:50%;
+  transform:translateY(-50%); z-index:5; display:none; flex-direction:column; gap:2px}
+@media(min-width:1180px){.rail{display:flex}}
+.rail a{display:flex; align-items:center; gap:10px; text-decoration:none;
+  color:var(--faint); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:5px 8px; border-radius:20px; transition:color .25s,background .25s}
+.rail .dot{width:7px; height:7px; border-radius:50%; background:var(--line-hi);
+  box-shadow:0 0 0 0 rgba(139,108,255,0); transition:all .3s; flex:none}
+.rail a:hover{color:var(--dim); background:rgba(255,255,255,.04)}
+.rail a.on{color:var(--ink)}
+.rail a.on .dot{background:var(--star); box-shadow:0 0 12px 2px rgba(255,228,168,.55)}
+.rail span.lbl{max-width:0; overflow:hidden; white-space:nowrap; transition:max-width .3s}
+.rail:hover span.lbl,.rail a.on span.lbl{max-width:150px}
+
+/* ——— nhịp chung ——— */
+section{padding-block:76px; scroll-margin-top:24px}
+.eyebrow{font-family:var(--fn); font-size:11.5px; font-weight:500; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--violet); margin:0 0 14px}
+h1,h2,h3{font-family:var(--fd); text-wrap:balance; margin:0}
+h1{font-size:clamp(38px,6.4vw,66px); font-weight:800; line-height:1.04; letter-spacing:-.02em}
+h2{font-size:clamp(26px,3.6vw,40px); font-weight:700; line-height:1.14; letter-spacing:-.01em}
+h3{font-size:18px; font-weight:600; line-height:1.3}
+p{margin:0}
+.lede{font-size:clamp(16px,1.9vw,20px); color:var(--dim); font-weight:300; max-width:62ch; margin-top:18px}
+.sub{color:var(--dim); font-size:15.5px}
+.num{font-family:var(--fn); font-variant-numeric:tabular-nums; font-weight:700}
+.grid{display:grid; gap:18px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+  border:1px solid var(--line); border-radius:16px; padding:24px; min-width:0}
+.card .k{font-family:var(--fn); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--faint); margin:0 0 10px}
+.card p.b{color:var(--dim); font-size:14.5px; margin-top:9px; line-height:1.62}
+
+/* ——— mở màn ——— */
+.hero{padding-block:clamp(64px,13vh,120px) 56px}
+.badge{display:inline-flex; align-items:center; gap:9px; font-family:var(--fn);
+  font-size:11px; letter-spacing:.17em; text-transform:uppercase; color:var(--dim);
+  border:1px solid var(--line); border-radius:999px; padding:7px 15px; background:rgba(255,255,255,.03)}
+.badge i{width:6px; height:6px; border-radius:50%; background:var(--accent);
+  box-shadow:0 0 10px 1px rgba(255,106,61,.8)}
+h1 .gl{background:linear-gradient(100deg,var(--star),var(--accent) 48%,var(--violet));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.stats{display:grid; gap:1px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  margin-top:46px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden}
+.stat{background:var(--deep); padding:22px 20px}
+.stat b{display:block; font-family:var(--fn); font-size:clamp(28px,4.4vw,40px); font-weight:700;
+  line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.stat s{display:block; text-decoration:none; color:var(--faint); font-size:12.5px; margin-top:9px}
+.s1 b{color:var(--star)} .s2 b{color:var(--cyan)} .s3 b{color:var(--accent)} .s4 b{color:var(--violet)}
+
+/* ——— nguyên tắc ——— */
+.prin{position:relative; padding-left:26px}
+.prin::before{content:""; position:absolute; left:7px; top:6px; bottom:6px; width:1px;
+  background:linear-gradient(var(--violet),transparent)}
+.prin::after{content:""; position:absolute; left:3px; top:6px; width:9px; height:9px;
+  border-radius:50%; background:var(--violet); box-shadow:0 0 12px 2px rgba(139,108,255,.6)}
+
+/* ——— máy tính kho ——— */
+.calc{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:26px}
+.calc label{display:block; font-family:var(--fn); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--faint); margin-bottom:10px}
+.calc input[type=range]{width:100%; accent-color:var(--accent)}
+.calc .inrow{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+.calc input[type=number]{width:112px; background:var(--void); color:var(--ink);
+  border:1px solid var(--line-hi); border-radius:10px; padding:10px 12px;
+  font-family:var(--fn); font-size:17px; font-weight:700}
+.calc .chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.05); border:1px solid var(--line); color:var(--dim);
+  font-family:var(--fn); font-size:12px; padding:7px 12px; border-radius:999px; cursor:pointer}
+.chip:hover{border-color:var(--line-hi); color:var(--ink)}
+.out{display:grid; gap:1px; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:22px}
+.out div{background:var(--deep); padding:17px}
+.out b{display:block; font-family:var(--fn); font-size:23px; font-weight:700;
+  font-variant-numeric:tabular-nums; color:var(--star)}
+.out s{display:block; text-decoration:none; color:var(--faint); font-size:11.5px; margin-top:6px}
+.note{color:var(--faint); font-size:13px; margin-top:16px; line-height:1.6}
+
+/* ——— timeline ——— */
+.steps{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(224px,1fr)); margin-top:34px}
+.step{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px;
+  cursor:pointer; transition:border-color .25s,transform .25s}
+.step:hover{border-color:var(--line-hi); transform:translateY(-3px)}
+.step .n{font-family:var(--fn); font-size:12px; letter-spacing:.14em; color:var(--cyan)}
+.step h3{margin:10px 0 8px}
+.step p{color:var(--dim); font-size:14px; line-height:1.6}
+.step[aria-expanded=false] p{display:none}
+.step .who{display:inline-block; margin-top:12px; font-family:var(--fn); font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--faint);
+  border:1px solid var(--line); border-radius:999px; padding:4px 10px}
+
+/* ——— đối tượng ——— */
+.aud{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(252px,1fr))}
+.aud .card{position:relative; overflow:hidden}
+.aud .card::after{content:""; position:absolute; inset:0 auto 0 0; width:3px}
+.aud .p1::after{background:var(--accent)} .aud .p2::after{background:var(--star)}
+.aud .p3::after{background:var(--violet)}
+.tag{display:inline-block; font-family:var(--fn); font-size:10.5px; letter-spacing:.17em;
+  text-transform:uppercase; padding:4px 10px; border-radius:999px; margin-bottom:12px}
+.t-pri{background:rgba(255,106,61,.16); color:#FFB497}
+.t-next{background:rgba(139,108,255,.18); color:#C3B2FF}
+
+/* ——— bảng phân vai ——— */
+.filters{display:flex; gap:8px; flex-wrap:wrap; margin:26px 0 18px}
+.fbtn{background:transparent; border:1px solid var(--line); color:var(--dim);
+  font-family:var(--fd); font-size:13px; font-weight:500; padding:8px 15px;
+  border-radius:999px; cursor:pointer; transition:all .2s}
+.fbtn:hover{border-color:var(--line-hi); color:var(--ink)}
+.fbtn[aria-pressed=true]{background:var(--ink); color:var(--void); border-color:var(--ink)}
+.tscroll{overflow-x:auto; border:1px solid var(--line); border-radius:16px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+th,td{text-align:left; padding:15px 18px; border-bottom:1px solid var(--line); vertical-align:top}
+thead th{font-family:var(--fn); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--faint); font-weight:500; background:var(--surface2); white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.item{font-weight:600; color:var(--ink); white-space:nowrap}
+td.masan{color:var(--dim)} td.fpt{color:var(--ink)} td.unit{color:var(--cyan); font-size:13.5px}
+tbody tr.hide{display:none}
+td.dash{color:var(--faint)}
+
+/* ——— truyền thông ——— */
+.lane{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px}
+.lane .own{font-family:var(--fn); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  padding:5px 11px; border-radius:999px; display:inline-block; margin-bottom:14px}
+.lane.a .own{background:rgba(63,217,208,.15); color:#8CEDE7}
+.lane.b .own{background:rgba(255,106,61,.15); color:#FFB497}
+.lane ul{margin:14px 0 0; padding-left:20px; color:var(--dim); font-size:14.5px; line-height:1.75}
+.lane li{margin-bottom:7px}
+
+/* ——— checklist ——— */
+.ask{background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:20px 22px; display:flex; gap:15px; align-items:flex-start; cursor:pointer;
+  transition:border-color .25s,background .25s}
+.ask:hover{border-color:var(--line-hi)}
+.ask input{appearance:none; width:21px; height:21px; flex:none; margin-top:2px;
+  border:1.5px solid var(--line-hi); border-radius:7px; background:transparent;
+  cursor:pointer; position:relative; transition:all .2s}
+.ask input:checked{background:var(--good); border-color:var(--good)}
+.ask input:checked::after{content:"✓"; position:absolute; inset:0; display:grid; place-items:center;
+  color:var(--void); font-size:13px; font-weight:800}
+.ask input:focus-visible{outline:2px solid var(--star); outline-offset:3px}
+.ask.done{background:rgba(69,209,137,.055); border-color:rgba(69,209,137,.3)}
+.ask.done .at{text-decoration:line-through; text-decoration-color:var(--faint); color:var(--dim)}
+.at{font-weight:600}
+.ab{color:var(--dim); font-size:14px; margin-top:6px; line-height:1.6}
+
+/* ——— lằn ranh ——— */
+.red{background:rgba(255,92,122,.07); border:1px solid rgba(255,92,122,.28); border-radius:16px; padding:24px}
+.red .k{color:#FF93A8}
+.red h3{color:#FFC2CD}
+
+/* ——— liên hệ ——— */
+.contact{background:linear-gradient(150deg,rgba(139,108,255,.16),rgba(255,106,61,.1));
+  border:1px solid var(--line-hi); border-radius:20px; padding:30px}
+.cpair{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px}
+.cval{font-family:var(--fn); font-size:17px; font-weight:700; color:var(--star);
+  -webkit-user-select:all; user-select:all}
+.cp{background:rgba(255,255,255,.07); border:1px solid var(--line); color:var(--dim);
+  font-family:var(--fd); font-size:12.5px; padding:7px 13px; border-radius:999px; cursor:pointer}
+.cp:hover{border-color:var(--line-hi); color:var(--ink)}
+.cp.ok{color:var(--good); border-color:var(--good)}
+
+footer{border-top:1px solid var(--line); margin-top:30px; padding-top:26px;
+  color:var(--faint); font-size:12.5px; line-height:1.7}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--star); outline-offset:2px}
+
+/* ——— thanh tab chính ——— */
+.tabs{position:sticky; top:env(safe-area-inset-top,0px); z-index:6;
+  display:flex; gap:6px; padding:12px 0 11px; margin-bottom:-6px;
+  background:linear-gradient(var(--void) 72%,rgba(5,7,15,0)); backdrop-filter:blur(7px)}
+.tab{background:transparent; border:1px solid var(--line); color:var(--dim);
+  font-family:var(--fd); font-size:13.5px; font-weight:600; padding:9px 17px;
+  border-radius:999px; cursor:pointer; transition:all .22s; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:8px}
+.tab:hover{border-color:var(--line-hi); color:var(--ink)}
+.tab[aria-selected=true]{background:var(--ink); color:var(--void); border-color:var(--ink)}
+.tab .cnt{font-family:var(--fn); font-size:11px; opacity:.6}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px);
+  z-index:7; background:var(--void)}
+
+/* ——— Q&A ——— */
+.qbar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:26px 0 18px}
+.qsearch{flex:1 1 230px; min-width:0; position:relative}
+.qsearch input{width:100%; background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); border-radius:12px; padding:12px 15px 12px 40px;
+  font-family:var(--fd); font-size:15px}
+.qsearch input::placeholder{color:var(--faint)}
+.qsearch svg{position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:15px; height:15px; stroke:var(--faint); fill:none; stroke-width:2}
+.qcats{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:22px}
+.qcat{background:transparent; border:1px solid var(--line); color:var(--dim);
+  font-family:var(--fd); font-size:13px; padding:7px 14px; border-radius:999px;
+  cursor:pointer; transition:all .2s; display:inline-flex; gap:7px; align-items:center}
+.qcat:hover{border-color:var(--line-hi); color:var(--ink)}
+.qcat[aria-pressed=true]{background:rgba(139,108,255,.18); border-color:var(--violet); color:#CDBFFF}
+.qcat .c{font-family:var(--fn); font-size:11px; opacity:.65}
+.qcat.open[aria-pressed=true]{background:rgba(255,92,122,.16); border-color:var(--crit); color:#FFADBB}
+.qgroup{margin-bottom:32px}
+.qgroup h3{font-family:var(--fn); font-size:11.5px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--faint); font-weight:500; margin-bottom:12px;
+  padding-bottom:9px; border-bottom:1px solid var(--line)}
+details.qa{background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  margin-bottom:9px; overflow:hidden; transition:border-color .2s}
+details.qa:hover{border-color:var(--line-hi)}
+details.qa[open]{background:var(--surface2); border-color:var(--line-hi)}
+details.qa summary{list-style:none; cursor:pointer; padding:17px 20px;
+  display:flex; gap:13px; align-items:flex-start; font-weight:600; font-size:15.5px; line-height:1.48}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-3px}
+.st{flex:none; width:19px; height:19px; border-radius:50%; margin-top:2px;
+  display:grid; place-items:center; font-size:11px; font-weight:800; font-family:var(--fn)}
+.st-ok{background:rgba(69,209,137,.18); color:var(--good)}
+.st-wait{background:rgba(255,194,75,.18); color:var(--warn)}
+.st-none{background:rgba(255,92,122,.18); color:var(--crit)}
+.qa .ans{padding:0 20px 19px 52px; color:var(--dim); font-size:14.5px; line-height:1.7}
+.qa .ans b{color:var(--ink); font-weight:600}
+.qa .ans ul{margin:9px 0 0; padding-left:19px}
+.qa .ans li{margin-bottom:5px}
+.qa .src{display:block; margin-top:12px; font-family:var(--fn); font-size:11px;
+  letter-spacing:.07em; color:var(--faint)}
+.qa.hide,.qgroup.hide{display:none}
+.qgroup.upd h3{color:#FFADBB; border-bottom-color:rgba(255,92,122,.3)}
+.qgroup.upd details.qa{background:rgba(255,92,122,.055); border-color:rgba(255,92,122,.22)}
+.qgroup.upd details.qa[open]{background:rgba(255,92,122,.085); border-color:rgba(255,92,122,.4)}
+.gnote{color:var(--faint); font-size:13.5px; line-height:1.65; margin:-4px 0 14px; max-width:68ch}
+.gnote b{color:var(--dim)}
+.legend{display:flex; gap:18px; flex-wrap:wrap; color:var(--faint); font-size:12.5px; margin-top:4px}
+.legend span{display:inline-flex; gap:7px; align-items:center}
+.empty{color:var(--faint); font-size:15px; padding:38px 0; text-align:center}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+@media(max-width:560px){section{padding-block:56px} .card,.calc,.lane,.contact{padding:20px}}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="neb neb1" aria-hidden="true"></div>
+<div class="neb neb2" aria-hidden="true"></div>
+<div class="neb neb3" aria-hidden="true"></div>
+
+<nav class="rail" aria-label="Mục trong trang">
+  <a href="#mo-dau" class="on"><span class="dot"></span><span class="lbl">Mở đầu</span></a>
+  <a href="#nguyen-tac"><span class="dot"></span><span class="lbl">Nguyên tắc</span></a>
+  <a href="#hang-hoa"><span class="dot"></span><span class="lbl">Hàng hoá</span></a>
+  <a href="#thoi-gian"><span class="dot"></span><span class="lbl">Thời gian</span></a>
+  <a href="#doi-tuong"><span class="dot"></span><span class="lbl">Đối tượng</span></a>
+  <a href="#phan-vai"><span class="dot"></span><span class="lbl">Phân vai</span></a>
+  <a href="#truyen-thong"><span class="dot"></span><span class="lbl">Truyền thông</span></a>
+  <a href="#xin-y-kien"><span class="dot"></span><span class="lbl">Xin ý kiến</span></a>
+  <a href="#luu-y"><span class="dot"></span><span class="lbl">Lưu ý</span></a>
+  <a href="#phan-hoi"><span class="dot"></span><span class="lbl">Phản hồi</span></a>
+</nav>
+
+<div class="wrap">
+
+<div class="tabs" role="tablist" aria-label="Chế độ xem">
+  <button class="tab" id="tab-tai-lieu" role="tab" aria-selected="true" aria-controls="view-tai-lieu" type="button">Tài liệu chương trình</button>
+  <button class="tab" id="tab-hoi-dap" role="tab" aria-selected="false" aria-controls="view-hoi-dap" type="button">Hỏi &amp; Đáp triển khai <span class="cnt">35</span></button>
+</div>
+
+<div id="view-tai-lieu" role="tabpanel" aria-labelledby="tab-tai-lieu">
+
+<section id="mo-dau" class="hero">
+  <span class="badge"><i></i>Chương trình hợp tác · FPT Telecom × Masan Consumer</span>
+  <h1 style="margin-top:26px">FPT Telecom<br>và <span class="gl">CHIN-SU</span></h1>
+  <p class="lede">Tài liệu tổng quan trao đổi với BGĐ Chi nhánh — nội dung chương trình, phân vai các bên và việc đề nghị KV, Chi nhánh phối hợp.</p>
+  <div class="stats">
+    <div class="stat s1"><b>27.216</b><s>gói hạt nêm CHIN-SU được tài trợ</s></div>
+    <div class="stat s2"><b>1.701</b><s>thùng, giao tới 8 điểm tiếp nhận</s></div>
+    <div class="stat s3"><b>12/2026</b><s>hoàn tất triển khai</s></div>
+    <div class="stat s4"><b id="dleft">—</b><s id="dlabel">ngày còn lại tới mốc hoàn tất</s></div>
+  </div>
+</section>
+
+<section id="nguyen-tac">
+  <p class="eyebrow">Ba nguyên tắc nền</p>
+  <h2>Chương trình này vận hành thế nào</h2>
+  <div class="grid g3" style="margin-top:34px">
+    <div class="card prin"><p class="k">01 · Cơ chế</p><h3>Barter — không phát sinh tiền mặt</h3>
+      <p class="b">Masan và FPT Telecom trao đổi quyền lợi, không chuyển tiền cho nhau. Mỗi bên tự chịu chi phí phát sinh (nếu có) trong phần việc của mình.</p></div>
+    <div class="card prin"><p class="k">02 · Bản chất</p><h3>Tăng nhận diện thương hiệu, không phải bán hàng</h3>
+      <p class="b">Quà tặng không dùng để bán lại, không sử dụng vào mục đích thương mại. Đây là điều kiện Masan đặt ra, không phải khuyến nghị.</p></div>
+    <div class="card prin"><p class="k">03 · Mục tiêu</p><h3>Giá trị thực tế cho Chi nhánh</h3>
+      <p class="b">Dựa trên nguồn quà tặng này, triển khai linh hoạt và nhanh chóng để mang về giá trị thực tế cho Chi nhánh.</p></div>
+  </div>
+</section>
+
+<section id="hang-hoa">
+  <p class="eyebrow">Hàng hoá</p>
+  <h2>CHIN-SU Hạt nêm Nấm Shiitake &amp; Tảo Kombu</h2>
+  <div class="stats" style="margin-top:32px">
+    <div class="stat s1"><b>400<span style="font-size:.55em">g</span></b><s>mỗi gói</s></div>
+    <div class="stat s2"><b>16</b><s>gói mỗi thùng</s></div>
+    <div class="stat s3"><b>6,86<span style="font-size:.5em"> kg</span></b><s>trọng lượng một thùng</s></div>
+    <div class="stat s4"><b>1.701</b><s>thùng · 27.216 gói</s></div>
+  </div>
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><p class="k">Hạn sử dụng</p><h3>Cuối tháng 2 và đầu tháng 3/2027</h3>
+      <p class="b">Lô sản phẩm có hạn dùng lần lượt. Hạn thực tế in trên bao bì, có thể check khi tiếp nhận.</p></div>
+    <div class="card"><p class="k">Quy cách kho</p><h3>Xếp tối đa 8 tầng, cao 1,232 m</h3>
+      <p class="b">Khoảng 125 thùng cần 2,5–3 m²; 94 thùng cần 2–2,2 m²; 65 thùng cần 1–1,5 m².</p></div>
+    <div class="card"><p class="k">Trách nhiệm hàng hoá</p><h3>Masan giao tới tận điểm tiếp nhận</h3>
+      <p class="b">Masan bảo đảm chất lượng, hạn dùng, tính pháp lý của sản phẩm. Chi nhánh kiểm đếm và ký biên bản.</p></div>
+  </div>
+
+  <div class="calc" style="margin-top:34px">
+    <p class="eyebrow" style="margin-bottom:18px">Ước nhu cầu kho theo số thùng</p>
+    <label for="boxes">Số thùng tại điểm tiếp nhận</label>
+    <div class="inrow">
+      <input id="boxes" type="number" min="1" max="1701" step="1" value="200" aria-describedby="calcnote">
+      <div class="chips">
+        <button class="chip" data-b="65" type="button">65</button>
+        <button class="chip" data-b="94" type="button">94</button>
+        <button class="chip" data-b="125" type="button">125</button>
+        <button class="chip" data-b="200" type="button">200</button>
+        <button class="chip" data-b="313" type="button">313</button>
+        <button class="chip" data-b="1701" type="button">Cả lô</button>
+      </div>
+    </div>
+    <input id="rng" type="range" min="1" max="1701" step="1" value="200" style="margin-top:18px" aria-label="Kéo chọn số thùng">
+    <div class="out">
+      <div><b id="o-goi">3.200</b><s>gói</s></div>
+      <div><b id="o-kg">1.372</b><s>kg</s></div>
+      <div><b id="o-m2">4,0–4,8</b><s>m² sàn, xếp 8 tầng</s></div>
+      <div><b id="o-m26">5,3–6,4</b><s>m² nếu chỉ xếp 6 tầng</s></div>
+    </div>
+    <p class="note" id="calcnote">Diện tích là <b>nội suy tuyến tính</b> từ ba mốc mẫu trong tài liệu (hệ số ≈ 0,020–0,024 m²/thùng), không phải số Masan cung cấp. Trần kho thấp hoặc quy định an toàn khác thì số tầng giảm và diện tích tăng tỉ lệ nghịch — hỏi lại từng site trước khi chốt.</p>
+  </div>
+  <p class="note">Nguồn: tổng chương trình 1.701 thùng — Phương án phân bổ CHIN-SU (Masan Consumer). Đối chiếu lại khi ký biên bản giao nhận.</p>
+</section>
+
+<section id="thoi-gian">
+  <p class="eyebrow">Thời gian triển khai</p>
+  <h2>Bắt đầu sớm — hoàn tất trong tháng 12/2026</h2>
+  <p class="sub" style="margin-top:14px">Bấm từng bước để xem chi tiết.</p>
+  <div class="steps">
+    <div class="step" role="button" tabindex="0" aria-expanded="true"><p class="n">BƯỚC 1</p><h3>Tiếp nhận hàng</h3>
+      <p>Kiểm đếm, ký biên bản giao nhận, ghi hạn sử dụng thực tế, nhập kho và bảo quản.</p><span class="who">Chi nhánh</span></div>
+    <div class="step" role="button" tabindex="0" aria-expanded="true"><p class="n">BƯỚC 2</p><h3>Chi nhánh lên kế hoạch</h3>
+      <p>Chủ động xây dựng chương trình cho từng nhóm đối tượng, phân bổ phù hợp đặc thù và nguồn lực khu vực.</p><span class="who">Chi nhánh</span></div>
+    <div class="step" role="button" tabindex="0" aria-expanded="true"><p class="n">BƯỚC 3</p><h3>Triển khai và ghi nhận</h3>
+      <p>Trao quà, chụp một số hình ảnh tiêu biểu theo nhóm đối tượng, cập nhật tiến độ.</p><span class="who">Chi nhánh</span></div>
+    <div class="step" role="button" tabindex="0" aria-expanded="true"><p class="n">BƯỚC 4</p><h3>Báo cáo nghiệm thu</h3>
+      <p>Chi nhánh tổng hợp gửi Hi FPT; Hi FPT tổng hợp toàn quốc và gửi đối tác.</p><span class="who">Chi nhánh → Hi FPT</span></div>
+  </div>
+  <p class="note">Hạn sử dụng lô sản phẩm là cuối tháng 2 và đầu tháng 3/2027 — mốc hoàn tất trong tháng 12/2026.</p>
+</section>
+
+<section id="doi-tuong">
+  <p class="eyebrow">Đối tượng thụ hưởng</p>
+  <h2>Ưu tiên khách hàng — kế hoạch do Chi nhánh quyết</h2>
+  <div class="aud" style="margin-top:32px">
+    <div class="card p1"><span class="tag t-pri">Ưu tiên</span><h3>Khách hàng mới</h3>
+      <p class="b">Quà tặng kèm khi đấu nối, bàn giao thiết bị, hoặc trong các hoạt động bán hàng tại địa bàn.</p></div>
+    <div class="card p2"><span class="tag t-pri">Ưu tiên</span><h3>Khách hàng hiện hữu</h3>
+      <p class="b">Chăm sóc khách hàng đang dùng dịch vụ — tri ân, giữ chân, xử lý sau sự cố, nhân dịp cuối năm.</p></div>
+    <div class="card p3"><span class="tag t-next">Tiếp theo</span><h3>CBNV Chi nhánh</h3>
+      <p class="b">Phần còn lại dành cho cán bộ nhân viên của Chi nhánh, theo cách phù hợp với từng đơn vị.</p></div>
+  </div>
+  <div class="card" style="margin-top:18px; border-color:var(--line-hi)">
+    <h3>Không có quota gói/người áp từ trên xuống</h3>
+    <p class="b">Chi nhánh chủ động xây dựng kế hoạch cho từng nhóm và thực hiện theo kế hoạch đó. Phân bổ theo đặc thù và nguồn lực từng khu vực.</p>
+  </div>
+</section>
+
+<section id="phan-vai">
+  <p class="eyebrow">Quyền lợi và trách nhiệm</p>
+  <h2>Ai làm gì</h2>
+  <p class="sub" style="margin-top:14px">Chọn một bên để chỉ xem những hạng mục bên đó có việc.</p>
+  <div class="filters" role="group" aria-label="Lọc theo bên">
+    <button class="fbtn" data-f="all" aria-pressed="true" type="button">Tất cả</button>
+    <button class="fbtn" data-f="masan" aria-pressed="false" type="button">Masan (CHIN-SU)</button>
+    <button class="fbtn" data-f="fpt" aria-pressed="false" type="button">FPT Telecom</button>
+  </div>
+  <div class="tscroll">
+    <table>
+      <thead><tr><th>Hạng mục</th><th>Masan (CHIN-SU)</th><th>FPT Telecom</th><th>Đơn vị thực hiện nội bộ</th></tr></thead>
+      <tbody>
+        <tr data-has="masan fpt"><td class="item">Thoả thuận hợp tác</td>
+          <td class="masan">Ký thoả thuận; cử đầu mối làm việc với FPT Telecom</td>
+          <td class="fpt">Ký thoả thuận; là đầu mối chịu trách nhiệm triển khai chính với đối tác</td>
+          <td class="unit">Hi FPT</td></tr>
+        <tr data-has="masan fpt"><td class="item">Hàng hoá</td>
+          <td class="masan">Cung cấp và vận chuyển tới tận điểm tiếp nhận; bảo đảm chất lượng, hạn dùng, tính pháp lý</td>
+          <td class="fpt">Tiếp nhận, kiểm đếm, ký biên bản giao nhận; lưu kho, bảo quản và phân bổ tới các nhóm đối tượng</td>
+          <td class="unit">Chi nhánh — tiếp nhận và triển khai</td></tr>
+        <tr data-has="fpt"><td class="item">Đối tượng thụ hưởng</td>
+          <td class="masan dash">—</td>
+          <td class="fpt">Ưu tiên khách hàng (mới và hiện hữu), sau đó CBNV Chi nhánh</td>
+          <td class="unit">Chi nhánh — chủ động lập kế hoạch từng nhóm và thực hiện</td></tr>
+        <tr data-has="masan fpt"><td class="item">Chi phí</td>
+          <td class="masan">Toàn bộ chi phí sản phẩm và vận chuyển</td>
+          <td class="fpt">Chi phí vận hành, luân chuyển nội bộ đơn vị mình (nếu có) và các hoạt động truyền thông</td>
+          <td class="unit">Chi nhánh — luân chuyển hàng · Hi FPT — kênh truyền thông</td></tr>
+        <tr data-has="masan fpt"><td class="item">Truyền thông</td>
+          <td class="masan">Cung cấp nội dung, ấn phẩm theo design guideline; duyệt nội dung đồng thương hiệu</td>
+          <td class="fpt">Truyền thông nội bộ Chi nhánh (email, poster, group chat, hình ảnh thực tế) và truyền thông in-app Hi FPT, e-standee</td>
+          <td class="unit">Chi nhánh và Hi FPT</td></tr>
+        <tr data-has="masan fpt"><td class="item">Nghiệm thu truyền thông</td>
+          <td class="masan">Tiếp nhận hồ sơ nghiệm thu truyền thông</td>
+          <td class="fpt">Tổng hợp bằng chứng các hạng mục truyền thông đã triển khai và gửi đối tác</td>
+          <td class="unit">Hi FPT</td></tr>
+        <tr data-has="masan fpt"><td class="item">Báo cáo</td>
+          <td class="masan">Phối hợp cung cấp thông tin sản phẩm</td>
+          <td class="fpt">Tổng hợp báo cáo nghiệm thu kết quả tiếp nhận, kế hoạch phân bổ và truyền thông. Template do hai bên cùng xây dựng — ngắn gọn, đơn giản, thực hiện nhanh</td>
+          <td class="unit">Chi nhánh tổng hợp và gửi · Hi FPT gửi đối tác</td></tr>
+        <tr data-has="fpt"><td class="item">Dữ liệu và hình ảnh</td>
+          <td class="masan dash">—</td>
+          <td class="fpt">Không chia sẻ dữ liệu cá nhân của CBNV hay khách hàng cho đối tác</td>
+          <td class="unit">Chi nhánh và Hi FPT</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="truyen-thong">
+  <p class="eyebrow">Truyền thông</p>
+  <h2>Hai tuyến, hai đơn vị chủ trì</h2>
+  <div class="grid g2" style="margin-top:32px">
+    <div class="lane a"><span class="own">Chi nhánh chủ trì</span>
+      <h3>Hình ảnh truyền thông tại khu vực</h3>
+      <ul>
+        <li>Chụp hình ảnh tiêu biểu thể hiện việc thực hiện chương trình — đặc biệt với chương trình dành cho khách hàng mới khi thực hiện D2D.</li>
+        <li>Hình ảnh truyền thông / tương tác, CSKH cũ.</li>
+        <li>Cập nhật tiến độ và kết quả.</li>
+      </ul></div>
+    <div class="lane b"><span class="own">Hi FPT chủ trì</span>
+      <h3>Truyền thông trên nền tảng và kênh chung</h3>
+      <ul>
+        <li>Nội dung trong ứng dụng Hi FPT.</li>
+        <li>Hệ thống e-standee tại các toà nhà.</li>
+        <li>Làm việc với Masan về nội dung và ấn phẩm theo design guideline.</li>
+        <li>Tổng hợp bằng chứng nghiệm thu truyền thông gửi đối tác.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section id="xin-y-kien">
+  <p class="eyebrow">Xin ý kiến</p>
+  <h2>Hai việc xin ý kiến và đề nghị Chi nhánh phối hợp</h2>
+  <div class="grid g2" style="margin-top:32px">
+    <div class="card"><p class="k">Việc 1</p><h3>Lập báo cáo theo chương trình</h3>
+      <p class="b">Ghi nhận số lượng đã thực hiện của từng chương trình, theo từng nhóm đối tượng được tặng quà. Template báo cáo sẽ do hai bên cùng xây dựng — tiêu chí: ngắn gọn, đơn giản, làm nhanh.</p></div>
+    <div class="card"><p class="k">Việc 2</p><h3>Ghi nhận hình ảnh trao quà</h3>
+      <p class="b">Tổng hợp một số hình ảnh trao quà theo nhóm đối tượng, theo chương trình. Không cần chụp toàn bộ — chỉ cần hình ảnh tiêu biểu đủ thể hiện việc đã triển khai.</p></div>
+  </div>
+  <p class="lede" style="font-size:18px">Nhờ các anh chị xem qua và góp ý thêm giúp — đặc biệt về khối lượng báo cáo và cách ghi nhận hình ảnh sao cho không thành gánh nặng vận hành.</p>
+</section>
+
+<section id="luu-y">
+  <p class="eyebrow">Lưu ý của chương trình</p>
+  <h2>Hai điều phải giữ</h2>
+  <div class="grid g2" style="margin-top:32px">
+    <div class="red"><p class="k">Không được làm</p><h3>Quà tặng không bán lại</h3>
+      <p class="b">Không dùng vào bất kỳ mục đích thương mại nào. Đây là điều kiện Masan đặt ra, cần phổ biến tới từng người.</p></div>
+    <div class="red"><p class="k">Không được làm</p><h3>Không chia sẻ dữ liệu cá nhân</h3>
+      <p class="b">Không gửi đối tác danh sách khách hàng, số điện thoại hay địa chỉ. Chỉ gửi hình ảnh và số liệu tổng hợp.</p></div>
+  </div>
+</section>
+
+<section id="phan-hoi">
+  <p class="eyebrow">Bước tiếp theo</p>
+  <h2>Việc cần Chi nhánh phản hồi, phối hợp</h2>
+  <p class="sub" style="margin-top:14px">Tick vào việc đã xong — trình duyệt này sẽ nhớ.</p>
+  <div class="grid" style="margin-top:24px; gap:12px">
+    <label class="ask"><input type="checkbox" data-id="a1"><span><span class="at">Cử đầu mối</span>
+      <span class="ab">Cùng thống nhất và góp ý về template báo cáo — những trường nào thật sự cần, trường nào bỏ được.</span></span></label>
+    <label class="ask"><input type="checkbox" data-id="a2"><span><span class="at">Phối hợp ghi nhận hình ảnh</span>
+      <span class="ab">Số lượng ảnh mỗi chương trình để nghiệm thu sẽ cùng thống nhất.</span></span></label>
+    <label class="ask"><input type="checkbox" data-id="a3"><span><span class="at">Dự kiến kế hoạch phân bổ</span>
+      <span class="ab">Cho ba nhóm đối tượng tại khu vực mình.</span></span></label>
+    <label class="ask"><input type="checkbox" data-id="a4"><span><span class="at">Tiếp nhận hàng và chủ động phân bổ</span>
+      <span class="ab">Chi nhánh tiếp nhận hàng, chủ động phân bổ và thực hiện tại khu vực mình.</span></span></label>
+  </div>
+
+  <div class="contact" style="margin-top:28px">
+    <p class="eyebrow" style="color:var(--star)">Đầu mối Team Loyalty — Hi FPT</p>
+    <p style="color:var(--dim); font-size:15px; margin-top:6px">Liên hệ <b style="color:var(--ink)">Team Loyalty — Hi FPT</b> qua kênh nội bộ của Chi nhánh để lấy đầu mối trực tiếp.</p>
+    <p class="note" style="margin-top:18px">Mọi vướng mắc về hàng hoá, chứng từ hay nội dung truyền thông, Chi nhánh đưa về Hi FPT — Hi FPT làm việc với đối tác.</p>
+  </div>
+
+  <footer>
+    Tài liệu nội bộ FPT Telecom · dựng từ bản slide chốt ngày 23/11/2026 (<span class="num">10</span> trang).
+    Số liệu hàng hoá theo Phương án phân bổ CHIN-SU của Masan Consumer — đối chiếu lại khi ký biên bản giao nhận.
+    Phần ước diện tích kho là nội suy của trợ lý, không phải số đối tác cung cấp.
+  </footer>
+</section>
+</div>
+
+<div id="view-hoi-dap" role="tabpanel" aria-labelledby="tab-hoi-dap" hidden>
+<section id="qa-top" style="padding-block:40px 0">
+  <p class="eyebrow">Hỏi &amp; Đáp triển khai</p>
+  <h2>Hỏi đáp, trả lời nhanh dành cho chi nhánh</h2>
+  <p class="lede"><b>26 câu đã chốt</b> xếp theo bảy hạng mục, cộng <b>9 câu đang update</b> nằm riêng một mục. Câu nào chưa có lời thì ghi thẳng là chưa có — để trống tốt hơn điền bừa.</p>
+  <div class="legend" style="margin-top:20px">
+    <span><i class="st st-ok" aria-hidden="true">✓</i> đã chốt</span>
+    <span><i class="st st-wait" aria-hidden="true">~</i> đề xuất, chờ hai bên thống nhất</span>
+    <span><i class="st st-none" aria-hidden="true">?</i> chưa có lời</span>
+  </div>
+  <div class="qbar">
+    <div class="qsearch">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+      <input id="qfind" type="search" placeholder="Tìm nhanh — gõ không dấu cũng được" aria-label="Tìm trong bộ câu hỏi">
+    </div>
+  </div>
+  <div class="qcats" role="group" aria-label="Lọc theo hạng mục">
+    <button class="qcat" data-c="all" aria-pressed="true" type="button">Tất cả <span class="c">26</span></button>
+    <button class="qcat" data-c="hang" aria-pressed="false" type="button">Hàng hoá và kho bãi <span class="c">4</span></button>
+    <button class="qcat" data-c="nhan" aria-pressed="false" type="button">Tiếp nhận và chứng từ <span class="c">5</span></button>
+    <button class="qcat" data-c="doi" aria-pressed="false" type="button">Đối tượng và phân bổ <span class="c">4</span></button>
+    <button class="qcat" data-c="anh" aria-pressed="false" type="button">Hình ảnh và dữ liệu cá nhân <span class="c">3</span></button>
+    <button class="qcat" data-c="bao" aria-pressed="false" type="button">Báo cáo và nghiệm thu <span class="c">3</span></button>
+    <button class="qcat" data-c="tt" aria-pressed="false" type="button">Truyền thông <span class="c">2</span></button>
+    <button class="qcat" data-c="ct" aria-pressed="false" type="button">Chương trình và cam kết <span class="c">5</span></button>
+    <button class="qcat open" data-c="update" aria-pressed="false" type="button">Đang update <span class="c">9</span></button>
+  </div>
+  <div class="qgroup" data-cat="hang">
+    <h3>Hàng hoá và kho bãi</h3>
+    <details class="qa" data-cat="hang" data-st="ok" data-k="Chi nhánh nhận bao nhiêu hàng, quy cách thế nào? Toàn chương trình 1.701 thùng = 27.216 gói, giao tới 8 điểm tiếp nhận. Mỗi thùng 16 gói loại 400 g, nặng 6,86 kg, kích thước 42,8 × 30,6 × 15,4 cm. Số lượng của từng điểm theo Phương án phân bổ của Masan — đối chiếu lại khi ký biên bản giao nhận. Hàng hoá và kho bãi">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chi nhánh nhận bao nhiêu hàng, quy cách thế nào?</span></summary>
+      <div class="ans">Toàn chương trình <b>1.701 thùng = 27.216 gói</b>, giao tới <b>8 điểm tiếp nhận</b>. Mỗi thùng <b>16 gói</b> loại 400 g, nặng <b>6,86 kg</b>, kích thước 42,8 × 30,6 × 15,4 cm. Số lượng của từng điểm theo Phương án phân bổ của Masan — đối chiếu lại khi ký biên bản giao nhận.<span class="src">Nguồn: Slide 3 · Phương án phân bổ CHIN-SU · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="hang" data-st="ok" data-k="Hạn sử dụng tới khi nào? Lô sản phẩm có hạn dùng lần lượt cuối tháng 2 và đầu tháng 3/2027. Hạn thực tế in trên bao bì — kiểm và ghi vào biên bản giao nhận khi tiếp nhận, đây là trường bắt buộc. Hàng hoá và kho bãi">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Hạn sử dụng tới khi nào?</span></summary>
+      <div class="ans">Lô sản phẩm có hạn dùng lần lượt <b>cuối tháng 2 và đầu tháng 3/2027</b>. Hạn thực tế in trên bao bì — <b>kiểm và ghi vào biên bản giao nhận</b> khi tiếp nhận, đây là trường bắt buộc.<span class="src">Nguồn: Slide 3 · Slide 4 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="hang" data-st="ok" data-k="Có phải hàng cận date không? Không. Chương trình hoàn tất trong tháng 12/2026, hạn dùng tới cuối tháng 2 – đầu tháng 3/2027, tức còn khoảng hai tháng đệm sau khi phát xong. Mốc 12/2026 đặt ra chính là để không đẩy hàng về sát hạn. Hàng hoá và kho bãi">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Có phải hàng cận date không?</span></summary>
+      <div class="ans">Không. Chương trình <b>hoàn tất trong tháng 12/2026</b>, hạn dùng tới cuối tháng 2 – đầu tháng 3/2027, tức còn khoảng hai tháng đệm sau khi phát xong. Mốc 12/2026 đặt ra chính là để không đẩy hàng về sát hạn.<span class="src">Nguồn: Slide 4 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="hang" data-st="ok" data-k="Chi phí vận chuyển ai trả? Masan chịu toàn bộ chi phí sản phẩm và vận chuyển tới tận điểm tiếp nhận, đồng thời bảo đảm chất lượng, hạn dùng và tính pháp lý của sản phẩm. Chi phí luân chuyển nội bộ trong địa bàn của đơn vị mình (nếu có) do Chi nhánh chịu. Hàng hoá và kho bãi">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chi phí vận chuyển ai trả?</span></summary>
+      <div class="ans">Masan chịu <b>toàn bộ chi phí sản phẩm và vận chuyển tới tận điểm tiếp nhận</b>, đồng thời bảo đảm chất lượng, hạn dùng và tính pháp lý của sản phẩm. Chi phí luân chuyển nội bộ trong địa bàn của đơn vị mình (nếu có) do Chi nhánh chịu.<span class="src">Nguồn: Slide 6 — mục Chi phí · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="nhan">
+    <h3>Tiếp nhận và chứng từ</h3>
+    <details class="qa" data-cat="nhan" data-st="ok" data-k="Ai là người ký biên bản giao nhận? Người nhận tại điểm tiếp nhận, ghi rõ họ tên, chức danh, số điện thoại. Luật quan trọng nhất: kiểm đếm xong mới ký. Ký trước rồi mới phát hiện thiếu thì FPT chịu. Tiếp nhận và chứng từ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Ai là người ký biên bản giao nhận?</span></summary>
+      <div class="ans">Người nhận tại điểm tiếp nhận, ghi rõ <b>họ tên, chức danh, số điện thoại</b>. Luật quan trọng nhất: <b>kiểm đếm xong mới ký</b>. Ký trước rồi mới phát hiện thiếu thì FPT chịu.<span class="src">Nguồn: Slide 4 · Q&A §4.1 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="nhan" data-st="ok" data-k="Biên bản giao nhận phải có những gì? Số biên bản, ngày giờ, tên chương trình, bên giao (người giao + SĐT + biển số xe), bên nhận (điểm tiếp nhận + địa chỉ + người nhận). Phần hàng hoá cần: số thùng theo kế hoạch, số thùng thực nhận, quy đổi số gói, chênh lệch, hạn sử dụng in trên bao bì, số lô/NSX nếu có, và tình trạng thùng — nguyên vẹn / móp / rách / ướt, ghi số thùng từng loại. Lập 2 bản, mỗi bên giữ 1. Tiếp nhận và chứng từ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Biên bản giao nhận phải có những gì?</span></summary>
+      <div class="ans">Số biên bản, ngày giờ, tên chương trình, bên giao (người giao + SĐT + biển số xe), bên nhận (điểm tiếp nhận + địa chỉ + người nhận). Phần hàng hoá cần: số thùng theo kế hoạch, <b>số thùng thực nhận</b>, quy đổi số gói, <b>chênh lệch</b>, <b>hạn sử dụng in trên bao bì</b>, số lô/NSX nếu có, và <b>tình trạng thùng</b> — nguyên vẹn / móp / rách / ướt, ghi số thùng từng loại. Lập 2 bản, mỗi bên giữ 1.<span class="src">Nguồn: Q&A §4.1 — Cương duyệt cấu trúc 19/11 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="nhan" data-st="ok" data-k="Hàng thiếu, móp hoặc rách thì làm gì? Ghi thẳng vào biên bản: mô tả, số lượng, ảnh kèm, cam kết xử lý của bên giao. Sau đó báo Hi FPT trong vòng 24 giờ. Không ký xác nhận đủ rồi mới báo sau. Tiếp nhận và chứng từ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Hàng thiếu, móp hoặc rách thì làm gì?</span></summary>
+      <div class="ans">Ghi thẳng vào biên bản: mô tả, số lượng, ảnh kèm, cam kết xử lý của bên giao. Sau đó <b>báo Hi FPT trong vòng 24 giờ</b>. Không ký xác nhận đủ rồi mới báo sau.<span class="src">Nguồn: Q&A §4.1 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="nhan" data-st="ok" data-k="Bảng ký nhận quà ghi những trường nào? Lập theo từng đợt phát. Với CBNV dùng mã nhân viên + họ tên; với khách hàng dùng mã hợp đồng / mã khách hàng + họ tên. Thêm: số gói nhận, ngày nhận, chữ ký, ghi chú. Cuối bảng có tổng số người và tổng số gói.Không thu CCCD, ngày sinh, địa chỉ nhà — mã nhân viên và mã hợp đồng là đủ để đối soát, FPT đã có sẵn.Bảng ký nhận là chứng từ nội bộ, không gửi cho Masan. Gửi đối tác chỉ gửi số tổng. Tiếp nhận và chứng từ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Bảng ký nhận quà ghi những trường nào?</span></summary>
+      <div class="ans">Lập theo <b>từng đợt phát</b>. Với CBNV dùng <b>mã nhân viên</b> + họ tên; với khách hàng dùng <b>mã hợp đồng / mã khách hàng</b> + họ tên. Thêm: số gói nhận, ngày nhận, chữ ký, ghi chú. Cuối bảng có tổng số người và tổng số gói.<ul><li><b>Không thu CCCD, ngày sinh, địa chỉ nhà</b> — mã nhân viên và mã hợp đồng là đủ để đối soát, FPT đã có sẵn.</li><li>Bảng ký nhận là <b>chứng từ nội bộ, không gửi cho Masan</b>. Gửi đối tác chỉ gửi số tổng.</li></ul><span class="src">Nguồn: Q&A §4.2 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="nhan" data-st="ok" data-k="Chứng minh &quot;đã phát đủ&quot; bằng cách nào? Một phép tính phải khớp, không số nào lơ lửng:Thực nhận − Đã phát (3 nhóm) − Hư hỏng/mất = Tồn khoBằng chứng số lượng (chứng từ, 100%) và bằng chứng hình ảnh (theo đợt) là hai thứ khác nhau — không dùng cái này thay cái kia. Tiếp nhận và chứng từ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chứng minh &quot;đã phát đủ&quot; bằng cách nào?</span></summary>
+      <div class="ans">Một phép tính phải khớp, không số nào lơ lửng:<ul><li><b>Thực nhận − Đã phát (3 nhóm) − Hư hỏng/mất = Tồn kho</b></li></ul>Bằng chứng số lượng (chứng từ, 100%) và bằng chứng hình ảnh (theo đợt) là <b>hai thứ khác nhau</b> — không dùng cái này thay cái kia.<span class="src">Nguồn: Q&A §4.3 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="doi">
+    <h3>Đối tượng và phân bổ</h3>
+    <details class="qa" data-cat="doi" data-st="ok" data-k="Ưu tiên ai trước? Khách hàng mới (tặng kèm khi đấu nối, bàn giao thiết bị, hoạt động bán hàng tại địa bàn) → khách hàng hiện hữu (tri ân, giữ chân, xử lý sau sự cố, dịp cuối năm) → CBNV Chi nhánh nhận phần còn lại. Đối tượng và phân bổ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Ưu tiên ai trước?</span></summary>
+      <div class="ans"><b>Khách hàng mới</b> (tặng kèm khi đấu nối, bàn giao thiết bị, hoạt động bán hàng tại địa bàn) → <b>khách hàng hiện hữu</b> (tri ân, giữ chân, xử lý sau sự cố, dịp cuối năm) → <b>CBNV Chi nhánh</b> nhận phần còn lại.<span class="src">Nguồn: Slide 5 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="doi" data-st="ok" data-k="Hi FPT có áp quota gói/người xuống không? Không. Không có quota áp từ trên xuống. Chi nhánh phân bổ theo đặc thù và nguồn lực từng khu vực. Đối tượng và phân bổ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Hi FPT có áp quota gói/người xuống không?</span></summary>
+      <div class="ans"><b>Không.</b> Không có quota áp từ trên xuống. Chi nhánh phân bổ theo đặc thù và nguồn lực từng khu vực.<span class="src">Nguồn: Slide 5 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="doi" data-st="ok" data-k="Có bắt buộc chia đủ cả ba nhóm không? Ba nhóm là thứ tự ưu tiên, không phải ba rổ bắt buộc chia đều. Chi nhánh chủ động xây dựng kế hoạch cho từng nhóm và thực hiện theo kế hoạch đó. Đối tượng và phân bổ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Có bắt buộc chia đủ cả ba nhóm không?</span></summary>
+      <div class="ans">Ba nhóm là <b>thứ tự ưu tiên</b>, không phải ba rổ bắt buộc chia đều. Chi nhánh chủ động xây dựng kế hoạch cho từng nhóm và thực hiện theo kế hoạch đó.<span class="src">Nguồn: Slide 5 · Slide 6 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="doi" data-st="ok" data-k="Quà có được bán gây quỹ, đấu giá hay đổi chác không? Không. Quà tặng không bán lại, không dùng vào bất kỳ mục đích thương mại nào. Đây là điều kiện Masan đặt ra, không phải khuyến nghị — và Chi nhánh cần phổ biến tới từng người tham gia trao quà. Đối tượng và phân bổ">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Quà có được bán gây quỹ, đấu giá hay đổi chác không?</span></summary>
+      <div class="ans"><b>Không.</b> Quà tặng không bán lại, không dùng vào bất kỳ mục đích thương mại nào. Đây là <b>điều kiện Masan đặt ra</b>, không phải khuyến nghị — và Chi nhánh cần phổ biến tới từng người tham gia trao quà.<span class="src">Nguồn: Slide 2 · Slide 10 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="anh">
+    <h3>Hình ảnh và dữ liệu cá nhân</h3>
+    <details class="qa" data-cat="anh" data-st="ok" data-k="Có phải chụp ảnh từng người nhận quà không? Không. Chỉ cần hình ảnh tiêu biểu đủ thể hiện việc đã triển khai, tổng hợp theo nhóm đối tượng và theo chương trình. Không cần chụp toàn bộ. Hình ảnh và dữ liệu cá nhân">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Có phải chụp ảnh từng người nhận quà không?</span></summary>
+      <div class="ans"><b>Không.</b> Chỉ cần <b>hình ảnh tiêu biểu</b> đủ thể hiện việc đã triển khai, tổng hợp theo nhóm đối tượng và theo chương trình. Không cần chụp toàn bộ.<span class="src">Nguồn: Slide 9 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="anh" data-st="ok" data-k="Chụp ảnh khách hàng có phải xin phép không? Có. Ảnh nhận diện được người là dữ liệu cá nhân theo Nghị định 13/2023/NĐ-CP, cộng với quyền hình ảnh tại Bộ luật Dân sự 2015 khi dùng cho mục đích quảng bá. Thực hành: nói rõ mục đích, xin phép trước khi chụp. Khách từ chối chụp vẫn nhận quà bình thường — không gắn điều kiện. Hình ảnh và dữ liệu cá nhân">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chụp ảnh khách hàng có phải xin phép không?</span></summary>
+      <div class="ans"><b>Có.</b> Ảnh nhận diện được người là <b>dữ liệu cá nhân</b> theo Nghị định 13/2023/NĐ-CP, cộng với quyền hình ảnh tại Bộ luật Dân sự 2015 khi dùng cho mục đích quảng bá. Thực hành: nói rõ mục đích, xin phép trước khi chụp. <b>Khách từ chối chụp vẫn nhận quà bình thường</b> — không gắn điều kiện.<span class="src">Nguồn: Slide 10 · NĐ 13/2023/NĐ-CP · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="anh" data-st="ok" data-k="Gửi danh sách khách hàng hoặc ảnh cho Masan được không? Không gửi dữ liệu cá nhân của CBNV hay khách hàng cho đối tác — không danh sách, không số điện thoại, không địa chỉ. Chỉ gửi hình ảnh và số liệu tổng hợp. Chuyển ảnh nhận diện được người sang Masan là chuyển dữ liệu cho bên thứ ba, nên ưu tiên ảnh không nhận diện cá nhân. Hình ảnh và dữ liệu cá nhân">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Gửi danh sách khách hàng hoặc ảnh cho Masan được không?</span></summary>
+      <div class="ans"><b>Không gửi dữ liệu cá nhân</b> của CBNV hay khách hàng cho đối tác — không danh sách, không số điện thoại, không địa chỉ. Chỉ gửi <b>hình ảnh và số liệu tổng hợp</b>. Chuyển ảnh nhận diện được người sang Masan là chuyển dữ liệu cho bên thứ ba, nên ưu tiên ảnh không nhận diện cá nhân.<span class="src">Nguồn: Slide 7 · Slide 10 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="bao">
+    <h3>Báo cáo và nghiệm thu</h3>
+    <details class="qa" data-cat="bao" data-st="ok" data-k="Báo cáo gửi cho ai? Chi nhánh tổng hợp → gửi Hi FPT → Hi FPT gửi đối tác. Chi nhánh không làm việc trực tiếp với Masan về báo cáo. Báo cáo và nghiệm thu">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Báo cáo gửi cho ai?</span></summary>
+      <div class="ans"><b>Chi nhánh tổng hợp → gửi Hi FPT → Hi FPT gửi đối tác.</b> Chi nhánh không làm việc trực tiếp với Masan về báo cáo.<span class="src">Nguồn: Slide 4 · Slide 7 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="bao" data-st="ok" data-k="Báo cáo phải ghi những gì? Số lượng đã thực hiện của từng chương trình, theo từng nhóm đối tượng được tặng quà. Cộng với kết quả tiếp nhận và kế hoạch phân bổ. Báo cáo và nghiệm thu">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Báo cáo phải ghi những gì?</span></summary>
+      <div class="ans">Số lượng đã thực hiện của <b>từng chương trình</b>, theo <b>từng nhóm đối tượng</b> được tặng quà. Cộng với kết quả tiếp nhận và kế hoạch phân bổ.<span class="src">Nguồn: Slide 9 · Slide 7 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="bao" data-st="ok" data-k="Ai nghiệm thu phần truyền thông? Hi FPT tổng hợp bằng chứng các hạng mục truyền thông đã triển khai và gửi đối tác. Riêng ảnh trao quà tại khu vực thì Chi nhánh tổng hợp và cập nhật. Báo cáo và nghiệm thu">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Ai nghiệm thu phần truyền thông?</span></summary>
+      <div class="ans"><b>Hi FPT</b> tổng hợp bằng chứng các hạng mục truyền thông đã triển khai và gửi đối tác. Riêng <b>ảnh trao quà tại khu vực</b> thì Chi nhánh tổng hợp và cập nhật.<span class="src">Nguồn: Slide 7 · Slide 8 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="tt">
+    <h3>Truyền thông</h3>
+    <details class="qa" data-cat="tt" data-st="ok" data-k="Chi nhánh có phải tự thiết kế poster không? Không. Masan cung cấp nội dung và ấn phẩm theo design guideline, Hi FPT làm việc với Masan về phần này. Chi nhánh làm truyền thông nội bộ (email, poster, group chat) và ghi nhận hình ảnh thực tế tại khu vực. Truyền thông">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chi nhánh có phải tự thiết kế poster không?</span></summary>
+      <div class="ans"><b>Không.</b> Masan cung cấp nội dung và ấn phẩm theo design guideline, Hi FPT làm việc với Masan về phần này. Chi nhánh làm <b>truyền thông nội bộ</b> (email, poster, group chat) và ghi nhận hình ảnh thực tế tại khu vực.<span class="src">Nguồn: Slide 7 · Slide 8 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="tt" data-st="ok" data-k="Hi FPT làm gì ở phần truyền thông? Nội dung trong ứng dụng Hi FPT, hệ thống e-standee tại các toà nhà, làm việc với Masan về nội dung và ấn phẩm theo design guideline, và tổng hợp bằng chứng nghiệm thu truyền thông gửi đối tác. Truyền thông">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Hi FPT làm gì ở phần truyền thông?</span></summary>
+      <div class="ans">Nội dung trong ứng dụng Hi FPT, hệ thống e-standee tại các toà nhà, làm việc với Masan về nội dung và ấn phẩm theo design guideline, và tổng hợp bằng chứng nghiệm thu truyền thông gửi đối tác.<span class="src">Nguồn: Slide 8 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup" data-cat="ct">
+    <h3>Chương trình và cam kết</h3>
+    <details class="qa" data-cat="ct" data-st="ok" data-k="Đây có phải chương trình bán hàng không? Không. Mục tiêu là tăng nhận diện thương hiệu. FPT Telecom không cam kết doanh số hay số lượt chuyển đổi nào cho Masan. Đừng hứa với đối tác những gì chương trình không cam kết. Chương trình và cam kết">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Đây có phải chương trình bán hàng không?</span></summary>
+      <div class="ans"><b>Không.</b> Mục tiêu là <b>tăng nhận diện thương hiệu</b>. FPT Telecom <b>không cam kết doanh số</b> hay số lượt chuyển đổi nào cho Masan. Đừng hứa với đối tác những gì chương trình không cam kết.<span class="src">Nguồn: Slide 2 · Q&A §6 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="ct" data-st="ok" data-k="FPT phải trả tiền gì cho Masan không? Không. Đây là barter — hai bên trao đổi quyền lợi, không chuyển tiền cho nhau. Mỗi bên tự chịu chi phí phát sinh trong phần việc của mình. Chương trình và cam kết">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>FPT phải trả tiền gì cho Masan không?</span></summary>
+      <div class="ans"><b>Không.</b> Đây là <b>barter</b> — hai bên trao đổi quyền lợi, không chuyển tiền cho nhau. Mỗi bên tự chịu chi phí phát sinh trong phần việc của mình.<span class="src">Nguồn: Slide 2 · Slide 6 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="ct" data-st="ok" data-k="Sau đợt này còn gì nữa không? Có. Giai đoạn 2: Masan tài trợ e-voucher lên kho quà đổi điểm FGold trên app Hi FPT cho hội viên FPT. Triển khai sau, sẽ có hướng dẫn riêng — đợt này không lẫn vào đó. Chương trình và cam kết">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Sau đợt này còn gì nữa không?</span></summary>
+      <div class="ans">Có. <b>Giai đoạn 2</b>: Masan tài trợ e-voucher lên kho quà đổi điểm <b>FGold</b> trên <b>app Hi FPT</b> cho <b>hội viên FPT</b>. Triển khai sau, sẽ có hướng dẫn riêng — đợt này không lẫn vào đó.<span class="src">Nguồn: Q&A §1 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="ct" data-st="ok" data-k="Chi nhánh được gì khi làm việc này? Một nguồn quà tặng sẵn có để chăm sóc khách hàng mới và khách hàng hiện hữu mà không tốn ngân sách của Chi nhánh, dùng linh hoạt theo kế hoạch do chính Chi nhánh đặt ra. Mục tiêu đặt ra của chương trình là mang về giá trị thực tế cho Chi nhánh. Chương trình và cam kết">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Chi nhánh được gì khi làm việc này?</span></summary>
+      <div class="ans">Một nguồn quà tặng sẵn có để chăm sóc khách hàng mới và khách hàng hiện hữu mà <b>không tốn ngân sách của Chi nhánh</b>, dùng linh hoạt theo kế hoạch do chính Chi nhánh đặt ra. Mục tiêu đặt ra của chương trình là <b>mang về giá trị thực tế cho Chi nhánh</b>.<span class="src">Nguồn: Slide 2 — nguyên tắc 03 · đã chốt</span></div>
+    </details>
+    <details class="qa" data-cat="ct" data-st="ok" data-k="Vướng mắc thì hỏi ai? Đưa về Hi FPT — Hi FPT làm việc với đối tác, Chi nhánh không phải tự đàm phán với Masan. Đầu mối Team Loyalty ở cuối tab Tài liệu chương trình. Chương trình và cam kết">
+      <summary><span class="st st-ok" title="đã chốt" aria-hidden="true">✓</span><span>Vướng mắc thì hỏi ai?</span></summary>
+      <div class="ans">Đưa về <b>Hi FPT</b> — Hi FPT làm việc với đối tác, Chi nhánh không phải tự đàm phán với Masan. Đầu mối Team Loyalty ở cuối tab <b>Tài liệu chương trình</b>.<span class="src">Nguồn: Slide 10 · đã chốt</span></div>
+    </details>
+  </div>
+  <div class="qgroup upd" data-cat="update">
+    <h3>Đang update · 9 câu</h3>
+    <p class="gnote">Những câu chưa có lời dứt khoát, hoặc mới là đề xuất của Hi FPT còn chờ hai bên thống nhất. Mục này <b>ẩn khỏi danh sách chính</b> để không lẫn với phần đã chốt — câu nào có lời thì chuyển về đúng hạng mục của nó.</p>
+    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hàng hoá và kho bãi Kho cần bao nhiêu mét vuông? Hệ số ≈ 0,020–0,024 m²/thùng khi xếp 8 tầng. Ví dụ 125 thùng cần 2,5–3 m²; 94 thùng cần 2–2,2 m²; 65 thùng cần 1–1,5 m². Tab Tài liệu chương trình có ô tính theo số thùng của riêng điểm mình. Đây là nội suy tuyến tính, không phải số Masan cung cấp. Hàng hoá và kho bãi">
+      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Kho cần bao nhiêu mét vuông?</span></summary>
+      <div class="ans">Hệ số ≈ <b>0,020–0,024 m²/thùng</b> khi xếp 8 tầng. Ví dụ 125 thùng cần 2,5–3 m²; 94 thùng cần 2–2,2 m²; 65 thùng cần 1–1,5 m². Tab <b>Tài liệu chương trình</b> có ô tính theo số thùng của riêng điểm mình. Đây là <b>nội suy tuyến tính</b>, không phải số Masan cung cấp.<span class="src">Hàng hoá và kho bãi · Nguồn: Slide 3 · nội suy của trợ lý · đề xuất, chờ thống nhất</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hàng hoá và kho bãi Trần kho thấp, không xếp được 8 tầng thì sao? Số tầng giảm thì diện tích tăng tỉ lệ nghịch — xếp 6 tầng cần nhân khoảng 1,33 lần. Chiều cao chồng 8 tầng là 1,232 m. Nếu quy định an toàn tại kho của đơn vị khác, báo Hi FPT trước khi xe tới để tính lại. Hàng hoá và kho bãi">
+      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Trần kho thấp, không xếp được 8 tầng thì sao?</span></summary>
+      <div class="ans">Số tầng giảm thì diện tích tăng tỉ lệ nghịch — xếp 6 tầng cần nhân khoảng <b>1,33 lần</b>. Chiều cao chồng 8 tầng là 1,232 m. Nếu quy định an toàn tại kho của đơn vị khác, báo Hi FPT trước khi xe tới để tính lại.<span class="src">Hàng hoá và kho bãi · Nguồn: Slide 3 · suy ra từ quy cách · đề xuất, chờ thống nhất</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="none" data-k="dang update hàng hoá và kho bãi Phát hết kế hoạch mà còn dư hàng thì xử lý thế nào? Chưa có hướng dẫn. Cần quyết: giữ lại đơn vị, điều chuyển sang điểm khác, hay cách khác. Chi nhánh gặp tình huống này thì báo Hi FPT, đừng tự xử lý rồi mới báo. Hàng hoá và kho bãi">
+      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Phát hết kế hoạch mà còn dư hàng thì xử lý thế nào?</span></summary>
+      <div class="ans"><b>Chưa có hướng dẫn.</b> Cần quyết: giữ lại đơn vị, điều chuyển sang điểm khác, hay cách khác. Chi nhánh gặp tình huống này thì báo Hi FPT, đừng tự xử lý rồi mới báo.<span class="src">Hàng hoá và kho bãi · Nguồn: Q&A §4 — câu chưa có lời · chưa có lời</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="none" data-k="dang update tiếp nhận và chứng từ Đã có file mẫu biên bản chưa? Chưa — mới có danh sách trường cần đủ, chưa có file mẫu. Cũng chưa xác minh FPT Telecom có mẫu biên bản giao nhận chuẩn của Ban Tài chính / Hành chính hay không; nếu có thì dùng mẫu đó. Chi nhánh cần gấp thì báo Hi FPT, đừng tự chế mỗi nơi một kiểu. Tiếp nhận và chứng từ">
+      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Đã có file mẫu biên bản chưa?</span></summary>
+      <div class="ans"><b>Chưa — mới có danh sách trường cần đủ, chưa có file mẫu.</b> Cũng chưa xác minh FPT Telecom có mẫu biên bản giao nhận chuẩn của Ban Tài chính / Hành chính hay không; nếu có thì dùng mẫu đó. Chi nhánh cần gấp thì báo Hi FPT, đừng tự chế mỗi nơi một kiểu.<span class="src">Tiếp nhận và chứng từ · Nguồn: Q&A §4 — câu chưa có lời · chưa có lời</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="none" data-k="dang update đối tượng và phân bổ Vậy mỗi người nên được mấy gói? Chưa có định mức chung và đây là quyền chủ động của Chi nhánh. Hai nguyên tắc đề xuất: bảo đảm công bằng trong cùng một nhóm, và phát hết trong kỳ thay vì giữ lại. Đối tượng và phân bổ">
+      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Vậy mỗi người nên được mấy gói?</span></summary>
+      <div class="ans"><b>Chưa có định mức chung</b> và đây là quyền chủ động của Chi nhánh. Hai nguyên tắc đề xuất: bảo đảm công bằng trong cùng một nhóm, và <b>phát hết trong kỳ</b> thay vì giữ lại.<span class="src">Đối tượng và phân bổ · Nguồn: Q&A §3 — câu chưa có lời · chưa có lời</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hình ảnh và dữ liệu cá nhân Bao nhiêu ảnh một đợt là đủ? Số lượng cuối cùng hai bên sẽ cùng thống nhất — đây chính là một trong hai việc đang xin ý kiến Chi nhánh. Mức đề xuất của Hi FPT: 3–5 ảnh mỗi đợt phát — toàn cảnh khu vực phát có nhận diện chương trình, cận cảnh sản phẩm, 1–2 khoảnh khắc trao quà, ảnh các điểm chạm truyền thông. Nộp trong ngày. Hình ảnh và dữ liệu cá nhân">
+      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Bao nhiêu ảnh một đợt là đủ?</span></summary>
+      <div class="ans">Số lượng cuối cùng <b>hai bên sẽ cùng thống nhất</b> — đây chính là một trong hai việc đang xin ý kiến Chi nhánh. Mức đề xuất của Hi FPT: <b>3–5 ảnh mỗi đợt phát</b> — toàn cảnh khu vực phát có nhận diện chương trình, cận cảnh sản phẩm, 1–2 khoảnh khắc trao quà, ảnh các điểm chạm truyền thông. Nộp trong ngày.<span class="src">Hình ảnh và dữ liệu cá nhân · Nguồn: Slide 9 · Q&A §5 — đề xuất chờ duyệt · đề xuất, chờ thống nhất</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="none" data-k="dang update hình ảnh và dữ liệu cá nhân Có chuẩn ngành nào quy định tỷ lệ phần trăm người nhận phải có ảnh không? Không có. Đã tìm 4 vòng (tiếng Anh và tiếng Việt, góc trade marketing và góc pháp lý) ngày 19/11/2026 — không có tỷ lệ chuẩn ngành nào được công bố cho việc chụp ảnh trao quà trực tiếp. Các chỉ số tồn tại đều do agency tự đặt cho POSM và trưng bày, và đều áp lên điểm triển khai, không áp lên người nhận. Hình ảnh và dữ liệu cá nhân">
+      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Có chuẩn ngành nào quy định tỷ lệ phần trăm người nhận phải có ảnh không?</span></summary>
+      <div class="ans"><b>Không có.</b> Đã tìm 4 vòng (tiếng Anh và tiếng Việt, góc trade marketing và góc pháp lý) ngày 19/11/2026 — không có tỷ lệ chuẩn ngành nào được công bố cho việc chụp ảnh trao quà trực tiếp. Các chỉ số tồn tại đều do agency tự đặt <b>cho POSM và trưng bày</b>, và đều áp lên <b>điểm triển khai</b>, không áp lên người nhận.<span class="src">Hình ảnh và dữ liệu cá nhân · Nguồn: Q&A §5 — đã scout 19/11/2026 · chưa có lời</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="wait" data-k="dang update báo cáo và nghiệm thu Template báo cáo ở đâu, có nặng không? Template do hai bên cùng xây dựng, tiêu chí đặt ra là ngắn gọn — đơn giản — thực hiện nhanh. Bản nháp chưa có, và đây chính là việc đang xin ý kiến Chi nhánh: trường nào thật sự cần, trường nào bỏ được. Báo cáo và nghiệm thu">
+      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Template báo cáo ở đâu, có nặng không?</span></summary>
+      <div class="ans"><b>Template do hai bên cùng xây dựng</b>, tiêu chí đặt ra là <b>ngắn gọn — đơn giản — thực hiện nhanh</b>. Bản nháp chưa có, và đây chính là việc đang xin ý kiến Chi nhánh: trường nào thật sự cần, trường nào bỏ được.<span class="src">Báo cáo và nghiệm thu · Nguồn: Slide 7 · Slide 9 · đề xuất, chờ thống nhất</span></div>
+    </details>
+    <details class="qa" data-cat="update" data-st="wait" data-k="dang update truyền thông Đăng lên fanpage hoặc kênh ngoài của Chi nhánh được không? Hỏi Hi FPT trước. Thoả thuận với Masan chưa ký, nên chưa phát ngôn ra kênh đối ngoại và chưa dùng nhận diện Masan ngoài ấn phẩm đã được duyệt. Nội dung đồng thương hiệu phải qua duyệt của Masan. Truyền thông">
+      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Đăng lên fanpage hoặc kênh ngoài của Chi nhánh được không?</span></summary>
+      <div class="ans"><b>Hỏi Hi FPT trước.</b> Thoả thuận với Masan chưa ký, nên chưa phát ngôn ra kênh đối ngoại và chưa dùng nhận diện Masan ngoài ấn phẩm đã được duyệt. Nội dung đồng thương hiệu phải qua duyệt của Masan.<span class="src">Truyền thông · Nguồn: Slide 6 · Q&A §8 — lằn ranh · đề xuất, chờ thống nhất</span></div>
+    </details>
+  </div>
+  <p class="empty" id="qempty" hidden>Không có câu nào khớp. Thử từ khoá ngắn hơn.</p>
+  <footer>Bộ câu hỏi dựng từ <b>Q&amp;A triển khai CHIN-SU giai đoạn 1</b> và bản slide chốt 23/11/2026. Mỗi câu ghi rõ nguồn và trạng thái; câu <b>chưa có lời</b> là ô còn mở, không phải chỗ để đoán. Có câu trả lời mới thì báo Hi FPT để cập nhật.</footer>
+</section>
+</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var LS="chinsu_cn_ask_v1";
+
+  /* ——— nền sao ——— */
+  var cv=document.getElementById("sky"), ctx=cv.getContext("2d"), stars=[], raf=0;
+  var slow=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function seed(){
+    var w=cv.width=innerWidth, h=cv.height=innerHeight;
+    var n=Math.min(320,Math.round(w*h/5200)); stars=[];
+    for(var i=0;i<n;i++) stars.push({
+      x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.25+.25,
+      a:Math.random()*.6+.18, sp:Math.random()*.9+.15, ph:Math.random()*6.28
+    });
+  }
+  function paint(t){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i], al=slow?s.a:s.a*(.6+.4*Math.sin(t/900*s.sp+s.ph));
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.2832);
+      ctx.fillStyle="rgba(255,240,214,"+al.toFixed(3)+")"; ctx.fill();
+    }
+    if(!slow) raf=requestAnimationFrame(paint);
+  }
+  seed(); paint(0);
+  addEventListener("resize",function(){ cancelAnimationFrame(raf); seed(); paint(0); if(!slow)raf=requestAnimationFrame(paint); });
+
+  /* ——— đếm ngày tới mốc hoàn tất ——— */
+  var dl=document.getElementById("dleft"), lb=document.getElementById("dlabel");
+  var end=new Date(2026,11,31), now=new Date();
+  var days=Math.ceil((end-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/86400000);
+  if(days>0){ dl.textContent=days; lb.textContent="ngày còn lại tới mốc hoàn tất 31/12/2026"; }
+  else { dl.textContent="0"; lb.textContent="mốc hoàn tất 31/12/2026 đã qua"; }
+
+  /* ——— máy tính kho ——— */
+  var bx=document.getElementById("boxes"), rg=document.getElementById("rng");
+  var vi=function(n){ return n.toLocaleString("vi-VN"); };
+  var d1=function(n){ return n.toLocaleString("vi-VN",{minimumFractionDigits:1,maximumFractionDigits:1}); };
+  function calc(v){
+    v=Math.max(1,Math.min(1701,Math.round(v)||1));
+    bx.value=v; rg.value=v;
+    document.getElementById("o-goi").textContent=vi(v*16);
+    document.getElementById("o-kg").textContent=vi(Math.round(v*6.86));
+    document.getElementById("o-m2").textContent=d1(v*0.020)+"–"+d1(v*0.024);
+    document.getElementById("o-m26").textContent=d1(v*0.020*4/3)+"–"+d1(v*0.024*4/3);
+  }
+  bx.addEventListener("input",function(){ calc(bx.value); });
+  rg.addEventListener("input",function(){ calc(rg.value); });
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"),function(c){
+    c.addEventListener("click",function(){ calc(+c.dataset.b); });
+  });
+  calc(200);
+
+  /* ——— timeline gập/mở ——— */
+  Array.prototype.forEach.call(document.querySelectorAll(".step"),function(s){
+    function tog(){ s.setAttribute("aria-expanded", s.getAttribute("aria-expanded")==="true"?"false":"true"); }
+    s.addEventListener("click",tog);
+    s.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); tog(); } });
+  });
+
+  /* ——— lọc bảng phân vai ——— */
+  var rows=document.querySelectorAll("tbody tr");
+  Array.prototype.forEach.call(document.querySelectorAll(".fbtn"),function(b){
+    b.addEventListener("click",function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".fbtn"),function(o){ o.setAttribute("aria-pressed", o===b?"true":"false"); });
+      var f=b.dataset.f;
+      Array.prototype.forEach.call(rows,function(r){
+        r.classList.toggle("hide", f!=="all" && r.dataset.has.indexOf(f)<0);
+      });
+    });
+  });
+
+  /* ——— checklist + localStorage ——— */
+  var saved={};
+  try{ saved=JSON.parse(localStorage.getItem(LS)||"{}")||{}; }catch(e){ saved={}; }
+  Array.prototype.forEach.call(document.querySelectorAll(".ask input"),function(c){
+    var w=c.closest(".ask");
+    if(saved[c.dataset.id]){ c.checked=true; w.classList.add("done"); }
+    c.addEventListener("change",function(){
+      w.classList.toggle("done",c.checked);
+      saved[c.dataset.id]=c.checked;
+      try{ localStorage.setItem(LS,JSON.stringify(saved)); }catch(e){}
+    });
+  });
+
+  /* ——— copy đầu mối ——— */
+  Array.prototype.forEach.call(document.querySelectorAll(".cp"),function(b){
+    b.addEventListener("click",function(){
+      var el=document.getElementById(b.dataset.copy), txt=el.textContent.trim(), old=b.textContent;
+      function ok(){ b.textContent="Đã copy"; b.classList.add("ok"); setTimeout(function(){ b.textContent=old; b.classList.remove("ok"); },1600); }
+      function sel(){ var r=document.createRange(); r.selectNodeContents(el);
+        var s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent="Đã chọn — Cmd+C"; setTimeout(function(){ b.textContent=old; },2200); }
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok,sel); } else { sel(); }
+    });
+  });
+
+
+  /* ——— chuyển tab chính ——— */
+  var SEC=["mo-dau","nguyen-tac","hang-hoa","thoi-gian","doi-tuong","phan-vai","truyen-thong","xin-y-kien","luu-y","phan-hoi"];
+  var vDoc=document.getElementById("view-tai-lieu"), vQa=document.getElementById("view-hoi-dap");
+  var tDoc=document.getElementById("tab-tai-lieu"), tQa=document.getElementById("tab-hoi-dap");
+  var rail=document.querySelector(".rail");
+  function show(v,push){
+    var qa=(v==="hoi-dap");
+    vQa.hidden=!qa; vDoc.hidden=qa;
+    tQa.setAttribute("aria-selected",qa?"true":"false");
+    tDoc.setAttribute("aria-selected",qa?"false":"true");
+    if(rail) rail.style.display=qa?"none":"";
+    if(push){ try{ location.hash=qa?"hoi-dap":"mo-dau"; }catch(e){} scrollTo(0,0); }
+  }
+  tDoc.addEventListener("click",function(){ show("tai-lieu",true); });
+  tQa.addEventListener("click",function(){ show("hoi-dap",true); });
+  function fromHash(){ show(location.hash.replace("#","")==="hoi-dap"?"hoi-dap":"tai-lieu",false); }
+  addEventListener("hashchange",function(){
+    var h=location.hash.replace("#","");
+    if(h==="hoi-dap"||SEC.indexOf(h)>=0||h==="") fromHash();
+  });
+  fromHash();
+
+  /* ——— lọc và tìm trong Q&A ——— */
+  var qas=document.querySelectorAll("details.qa"), grps=document.querySelectorAll(".qgroup");
+  var find=document.getElementById("qfind"), emp=document.getElementById("qempty");
+  var cat="all", term="";
+  function bo(t){ return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d"); }
+  function apply(){
+    var q=bo(term.trim()), n=0;
+    Array.prototype.forEach.call(qas,function(d){
+      var okc = cat==="all" ? (d.dataset.cat!=="update" || !!q) : d.dataset.cat===cat;
+      var okq = !q || bo(d.dataset.k).indexOf(q)>=0;
+      var vis = okc && okq;
+      d.classList.toggle("hide",!vis);
+      if(vis) n++; else d.open=false;
+      if(vis && q) d.open=true;
+    });
+    Array.prototype.forEach.call(grps,function(g){
+      g.classList.toggle("hide", g.querySelectorAll("details.qa:not(.hide)").length===0);
+    });
+    emp.hidden = n>0;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".qcat"),function(b){
+    b.addEventListener("click",function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".qcat"),function(o){ o.setAttribute("aria-pressed", o===b?"true":"false"); });
+      cat=b.dataset.c; apply();
+    });
+  });
+  find.addEventListener("input",function(){ term=find.value; apply(); });
+
+  /* ——— rail theo vị trí đọc ——— */
+  var links=document.querySelectorAll(".rail a");
+  var secs=Array.prototype.map.call(links,function(a){ return document.querySelector(a.getAttribute("href")); });
+  if(window.IntersectionObserver){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var i=secs.indexOf(e.target);
+        Array.prototype.forEach.call(links,function(a,j){ a.classList.toggle("on",j===i); });
+      });
+    },{rootMargin:"-45% 0px -50% 0px"});
+    secs.forEach(function(s){ if(s) io.observe(s); });
+  }
+})();
+</script>
+
+</body>
+</html>
