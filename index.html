@@ -306,7 +306,7 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 
 <div class="tabs" role="tablist" aria-label="Chế độ xem">
   <button class="tab" id="tab-tai-lieu" role="tab" aria-selected="true" aria-controls="view-tai-lieu" type="button">Tài liệu chương trình</button>
-  <button class="tab" id="tab-hoi-dap" role="tab" aria-selected="false" aria-controls="view-hoi-dap" type="button">Hỏi &amp; Đáp triển khai <span class="cnt">35</span></button>
+  <button class="tab" id="tab-hoi-dap" role="tab" aria-selected="false" aria-controls="view-hoi-dap" type="button">Hỏi &amp; Đáp triển khai <span class="cnt">26</span></button>
 </div>
 
 <div id="view-tai-lieu" role="tabpanel" aria-labelledby="tab-tai-lieu">
@@ -542,7 +542,7 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 <section id="qa-top" style="padding-block:40px 0">
   <p class="eyebrow">Hỏi &amp; Đáp triển khai</p>
   <h2>Hỏi đáp, trả lời nhanh dành cho chi nhánh</h2>
-  <p class="lede"><b>26 câu đã chốt</b> xếp theo bảy hạng mục, cộng <b>9 câu đang update</b> nằm riêng một mục. Câu nào chưa có lời thì ghi thẳng là chưa có — để trống tốt hơn điền bừa.</p>
+  <p class="lede"><b>26 câu đã chốt</b> xếp theo bảy hạng mục, gom từ hồ sơ triển khai. Mỗi câu ghi rõ nguồn.</p>
   <div class="legend" style="margin-top:20px">
     <span><i class="st st-ok" aria-hidden="true">✓</i> đã chốt</span>
     <span><i class="st st-wait" aria-hidden="true">~</i> đề xuất, chờ hai bên thống nhất</span>
@@ -563,7 +563,6 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
     <button class="qcat" data-c="bao" aria-pressed="false" type="button">Báo cáo và nghiệm thu <span class="c">3</span></button>
     <button class="qcat" data-c="tt" aria-pressed="false" type="button">Truyền thông <span class="c">2</span></button>
     <button class="qcat" data-c="ct" aria-pressed="false" type="button">Chương trình và cam kết <span class="c">5</span></button>
-    <button class="qcat open" data-c="update" aria-pressed="false" type="button">Đang update <span class="c">9</span></button>
   </div>
   <div class="qgroup" data-cat="hang">
     <h3>Hàng hoá và kho bãi</h3>
@@ -690,46 +689,7 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
       <div class="ans">Đưa về <b>Hi FPT</b> — Hi FPT làm việc với đối tác, Chi nhánh không phải tự đàm phán với Masan. Đầu mối Team Loyalty ở cuối tab <b>Tài liệu chương trình</b>.<span class="src">Nguồn: Slide 10 · đã chốt</span></div>
     </details>
   </div>
-  <div class="qgroup upd" data-cat="update">
-    <h3>Đang update · 9 câu</h3>
-    <p class="gnote">Những câu chưa có lời dứt khoát, hoặc mới là đề xuất của Hi FPT còn chờ hai bên thống nhất. Mục này <b>ẩn khỏi danh sách chính</b> để không lẫn với phần đã chốt — câu nào có lời thì chuyển về đúng hạng mục của nó.</p>
-    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hàng hoá và kho bãi Kho cần bao nhiêu mét vuông? Hệ số ≈ 0,020–0,024 m²/thùng khi xếp 8 tầng. Ví dụ 125 thùng cần 2,5–3 m²; 94 thùng cần 2–2,2 m²; 65 thùng cần 1–1,5 m². Tab Tài liệu chương trình có ô tính theo số thùng của riêng điểm mình. Đây là nội suy tuyến tính, không phải số Masan cung cấp. Hàng hoá và kho bãi">
-      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Kho cần bao nhiêu mét vuông?</span></summary>
-      <div class="ans">Hệ số ≈ <b>0,020–0,024 m²/thùng</b> khi xếp 8 tầng. Ví dụ 125 thùng cần 2,5–3 m²; 94 thùng cần 2–2,2 m²; 65 thùng cần 1–1,5 m². Tab <b>Tài liệu chương trình</b> có ô tính theo số thùng của riêng điểm mình. Đây là <b>nội suy tuyến tính</b>, không phải số Masan cung cấp.<span class="src">Hàng hoá và kho bãi · Nguồn: Slide 3 · nội suy của trợ lý · đề xuất, chờ thống nhất</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hàng hoá và kho bãi Trần kho thấp, không xếp được 8 tầng thì sao? Số tầng giảm thì diện tích tăng tỉ lệ nghịch — xếp 6 tầng cần nhân khoảng 1,33 lần. Chiều cao chồng 8 tầng là 1,232 m. Nếu quy định an toàn tại kho của đơn vị khác, báo Hi FPT trước khi xe tới để tính lại. Hàng hoá và kho bãi">
-      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Trần kho thấp, không xếp được 8 tầng thì sao?</span></summary>
-      <div class="ans">Số tầng giảm thì diện tích tăng tỉ lệ nghịch — xếp 6 tầng cần nhân khoảng <b>1,33 lần</b>. Chiều cao chồng 8 tầng là 1,232 m. Nếu quy định an toàn tại kho của đơn vị khác, báo Hi FPT trước khi xe tới để tính lại.<span class="src">Hàng hoá và kho bãi · Nguồn: Slide 3 · suy ra từ quy cách · đề xuất, chờ thống nhất</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="none" data-k="dang update hàng hoá và kho bãi Phát hết kế hoạch mà còn dư hàng thì xử lý thế nào? Chưa có hướng dẫn. Cần quyết: giữ lại đơn vị, điều chuyển sang điểm khác, hay cách khác. Chi nhánh gặp tình huống này thì báo Hi FPT, đừng tự xử lý rồi mới báo. Hàng hoá và kho bãi">
-      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Phát hết kế hoạch mà còn dư hàng thì xử lý thế nào?</span></summary>
-      <div class="ans"><b>Chưa có hướng dẫn.</b> Cần quyết: giữ lại đơn vị, điều chuyển sang điểm khác, hay cách khác. Chi nhánh gặp tình huống này thì báo Hi FPT, đừng tự xử lý rồi mới báo.<span class="src">Hàng hoá và kho bãi · Nguồn: Q&A §4 — câu chưa có lời · chưa có lời</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="none" data-k="dang update tiếp nhận và chứng từ Đã có file mẫu biên bản chưa? Chưa — mới có danh sách trường cần đủ, chưa có file mẫu. Cũng chưa xác minh FPT Telecom có mẫu biên bản giao nhận chuẩn của Ban Tài chính / Hành chính hay không; nếu có thì dùng mẫu đó. Chi nhánh cần gấp thì báo Hi FPT, đừng tự chế mỗi nơi một kiểu. Tiếp nhận và chứng từ">
-      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Đã có file mẫu biên bản chưa?</span></summary>
-      <div class="ans"><b>Chưa — mới có danh sách trường cần đủ, chưa có file mẫu.</b> Cũng chưa xác minh FPT Telecom có mẫu biên bản giao nhận chuẩn của Ban Tài chính / Hành chính hay không; nếu có thì dùng mẫu đó. Chi nhánh cần gấp thì báo Hi FPT, đừng tự chế mỗi nơi một kiểu.<span class="src">Tiếp nhận và chứng từ · Nguồn: Q&A §4 — câu chưa có lời · chưa có lời</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="none" data-k="dang update đối tượng và phân bổ Vậy mỗi người nên được mấy gói? Chưa có định mức chung và đây là quyền chủ động của Chi nhánh. Hai nguyên tắc đề xuất: bảo đảm công bằng trong cùng một nhóm, và phát hết trong kỳ thay vì giữ lại. Đối tượng và phân bổ">
-      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Vậy mỗi người nên được mấy gói?</span></summary>
-      <div class="ans"><b>Chưa có định mức chung</b> và đây là quyền chủ động của Chi nhánh. Hai nguyên tắc đề xuất: bảo đảm công bằng trong cùng một nhóm, và <b>phát hết trong kỳ</b> thay vì giữ lại.<span class="src">Đối tượng và phân bổ · Nguồn: Q&A §3 — câu chưa có lời · chưa có lời</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="wait" data-k="dang update hình ảnh và dữ liệu cá nhân Bao nhiêu ảnh một đợt là đủ? Số lượng cuối cùng hai bên sẽ cùng thống nhất — đây chính là một trong hai việc đang xin ý kiến Chi nhánh. Mức đề xuất của Hi FPT: 3–5 ảnh mỗi đợt phát — toàn cảnh khu vực phát có nhận diện chương trình, cận cảnh sản phẩm, 1–2 khoảnh khắc trao quà, ảnh các điểm chạm truyền thông. Nộp trong ngày. Hình ảnh và dữ liệu cá nhân">
-      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Bao nhiêu ảnh một đợt là đủ?</span></summary>
-      <div class="ans">Số lượng cuối cùng <b>hai bên sẽ cùng thống nhất</b> — đây chính là một trong hai việc đang xin ý kiến Chi nhánh. Mức đề xuất của Hi FPT: <b>3–5 ảnh mỗi đợt phát</b> — toàn cảnh khu vực phát có nhận diện chương trình, cận cảnh sản phẩm, 1–2 khoảnh khắc trao quà, ảnh các điểm chạm truyền thông. Nộp trong ngày.<span class="src">Hình ảnh và dữ liệu cá nhân · Nguồn: Slide 9 · Q&A §5 — đề xuất chờ duyệt · đề xuất, chờ thống nhất</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="none" data-k="dang update hình ảnh và dữ liệu cá nhân Có chuẩn ngành nào quy định tỷ lệ phần trăm người nhận phải có ảnh không? Không có. Đã tìm 4 vòng (tiếng Anh và tiếng Việt, góc trade marketing và góc pháp lý) ngày 19/11/2026 — không có tỷ lệ chuẩn ngành nào được công bố cho việc chụp ảnh trao quà trực tiếp. Các chỉ số tồn tại đều do agency tự đặt cho POSM và trưng bày, và đều áp lên điểm triển khai, không áp lên người nhận. Hình ảnh và dữ liệu cá nhân">
-      <summary><span class="st st-none" title="chưa có lời" aria-hidden="true">?</span><span>Có chuẩn ngành nào quy định tỷ lệ phần trăm người nhận phải có ảnh không?</span></summary>
-      <div class="ans"><b>Không có.</b> Đã tìm 4 vòng (tiếng Anh và tiếng Việt, góc trade marketing và góc pháp lý) ngày 19/11/2026 — không có tỷ lệ chuẩn ngành nào được công bố cho việc chụp ảnh trao quà trực tiếp. Các chỉ số tồn tại đều do agency tự đặt <b>cho POSM và trưng bày</b>, và đều áp lên <b>điểm triển khai</b>, không áp lên người nhận.<span class="src">Hình ảnh và dữ liệu cá nhân · Nguồn: Q&A §5 — đã scout 19/11/2026 · chưa có lời</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="wait" data-k="dang update báo cáo và nghiệm thu Template báo cáo ở đâu, có nặng không? Template do hai bên cùng xây dựng, tiêu chí đặt ra là ngắn gọn — đơn giản — thực hiện nhanh. Bản nháp chưa có, và đây chính là việc đang xin ý kiến Chi nhánh: trường nào thật sự cần, trường nào bỏ được. Báo cáo và nghiệm thu">
-      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Template báo cáo ở đâu, có nặng không?</span></summary>
-      <div class="ans"><b>Template do hai bên cùng xây dựng</b>, tiêu chí đặt ra là <b>ngắn gọn — đơn giản — thực hiện nhanh</b>. Bản nháp chưa có, và đây chính là việc đang xin ý kiến Chi nhánh: trường nào thật sự cần, trường nào bỏ được.<span class="src">Báo cáo và nghiệm thu · Nguồn: Slide 7 · Slide 9 · đề xuất, chờ thống nhất</span></div>
-    </details>
-    <details class="qa" data-cat="update" data-st="wait" data-k="dang update truyền thông Đăng lên fanpage hoặc kênh ngoài của Chi nhánh được không? Hỏi Hi FPT trước. Thoả thuận với Masan chưa ký, nên chưa phát ngôn ra kênh đối ngoại và chưa dùng nhận diện Masan ngoài ấn phẩm đã được duyệt. Nội dung đồng thương hiệu phải qua duyệt của Masan. Truyền thông">
-      <summary><span class="st st-wait" title="đề xuất, chờ thống nhất" aria-hidden="true">~</span><span>Đăng lên fanpage hoặc kênh ngoài của Chi nhánh được không?</span></summary>
-      <div class="ans"><b>Hỏi Hi FPT trước.</b> Thoả thuận với Masan chưa ký, nên chưa phát ngôn ra kênh đối ngoại và chưa dùng nhận diện Masan ngoài ấn phẩm đã được duyệt. Nội dung đồng thương hiệu phải qua duyệt của Masan.<span class="src">Truyền thông · Nguồn: Slide 6 · Q&A §8 — lằn ranh · đề xuất, chờ thống nhất</span></div>
-    </details>
-  </div>
+
   <p class="empty" id="qempty" hidden>Không có câu nào khớp. Thử từ khoá ngắn hơn.</p>
   <footer>Bộ câu hỏi dựng từ <b>Q&amp;A triển khai CHIN-SU giai đoạn 1</b> và bản slide chốt 23/11/2026. Mỗi câu ghi rõ nguồn và trạng thái; câu <b>chưa có lời</b> là ô còn mở, không phải chỗ để đoán. Có câu trả lời mới thì báo Hi FPT để cập nhật.</footer>
 </section>
@@ -860,11 +820,15 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
   var qas=document.querySelectorAll("details.qa"), grps=document.querySelectorAll(".qgroup");
   var find=document.getElementById("qfind"), emp=document.getElementById("qempty");
   var cat="all", term="";
+  /* Mục "Đang update" đang TẮT. Mở lại: đổi thành true, rồi bỏ thuộc tính hidden
+     ở nút .qcat[data-c=update] và ở div.qgroup.upd. */
+  var SHOW_UPDATE=false;
   function bo(t){ return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d"); }
   function apply(){
     var q=bo(term.trim()), n=0;
     Array.prototype.forEach.call(qas,function(d){
-      var okc = cat==="all" ? (d.dataset.cat!=="update" || !!q) : d.dataset.cat===cat;
+      var upd = d.dataset.cat==="update";
+      var okc = (!upd || SHOW_UPDATE) && (cat==="all" ? (!upd || !!q) : d.dataset.cat===cat);
       var okq = !q || bo(d.dataset.k).indexOf(q)>=0;
       var vis = okc && okq;
       d.classList.toggle("hide",!vis);
