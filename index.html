@@ -280,19 +280,13 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 .empty{color:var(--faint); font-size:15px; padding:38px 0; text-align:center}
 
 
-/* ——— nhãn nội bộ + vân chìm ——— */
+/* ——— nhãn nội bộ ——— */
 .ribbon{display:flex; align-items:center; gap:10px; flex-wrap:wrap;
   background:rgba(255,92,122,.1); border:1px solid rgba(255,92,122,.32);
   border-radius:11px; padding:10px 15px; margin:0 0 4px;
   color:#FFB3C0; font-size:13px; line-height:1.5; font-weight:500}
 .ribbon svg{width:15px; height:15px; flex:none; stroke:#FF8FA3; fill:none; stroke-width:1.8}
 .ribbon b{color:#FFD5DC; font-weight:700}
-#wm{position:fixed; inset:0; z-index:3; pointer-events:none; overflow:hidden;
-  display:flex; flex-wrap:wrap; align-content:center; justify-content:center;
-  gap:52px 70px; transform:rotate(-28deg) scale(1.5); transform-origin:center}
-#wm span{font-family:var(--fn); font-size:14px; font-weight:700; letter-spacing:.18em;
-  text-transform:uppercase; color:rgba(255,255,255,.055); white-space:nowrap}
-@media(max-width:560px){#wm span{font-size:11px} #wm{gap:40px 44px}}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 @media(max-width:560px){section{padding-block:56px} .card,.calc,.lane,.contact{padding:20px}}
@@ -300,7 +294,6 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
-<div id="wm" aria-hidden="true"></div>
 <div class="neb neb1" aria-hidden="true"></div>
 <div class="neb neb2" aria-hidden="true"></div>
 <div class="neb neb3" aria-hidden="true"></div>
@@ -327,7 +320,7 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 
 <div id="view-tai-lieu" role="tabpanel" aria-labelledby="tab-tai-lieu">
 
-<p class="ribbon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span><b>Tài liệu nội bộ</b> — không share cho người không phải thành viên trong FPT. Thoả thuận với đối tác chưa ký, chưa phát ngôn đối ngoại.</span></p>
+<p class="ribbon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span><b>Tài liệu nội bộ</b> — không share cho người không phải thành viên trong FPT.</span></p>
 
 <section id="mo-dau" class="hero">
   <span class="badge"><i></i>Chương trình hợp tác · FPT Telecom × Masan Consumer</span>
@@ -558,7 +551,7 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
 
 <div id="view-hoi-dap" role="tabpanel" aria-labelledby="tab-hoi-dap" hidden>
 
-<p class="ribbon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span><b>Tài liệu nội bộ</b> — không share cho người không phải thành viên trong FPT. Thoả thuận với đối tác chưa ký, chưa phát ngôn đối ngoại.</span></p>
+<p class="ribbon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg><span><b>Tài liệu nội bộ</b> — không share cho người không phải thành viên trong FPT.</span></p>
 <section id="qa-top" style="padding-block:40px 0">
   <p class="eyebrow">Hỏi &amp; Đáp triển khai</p>
   <h2>Hỏi đáp, trả lời nhanh dành cho chi nhánh</h2>
@@ -721,17 +714,6 @@ details.qa summary:focus-visible{outline:2px solid var(--star); outline-offset:-
   "use strict";
   var LS="chinsu_cn_ask_v1";
 
-
-  /* ——— vân chìm: nhãn nội bộ lọt vào mọi ảnh chụp ——— */
-  (function(){
-    var wm=document.getElementById("wm");
-    if(!wm) return;
-    var txt="Tài liệu nội bộ · FPT Telecom · không chia sẻ ra ngoài";
-    var k=Math.max(24,Math.ceil(innerWidth*innerHeight/42000));
-    var f=document.createDocumentFragment();
-    for(var i=0;i<k;i++){ var e=document.createElement("span"); e.textContent=txt; f.appendChild(e); }
-    wm.appendChild(f);
-  })();
 
   /* ——— nền sao ——— */
   var cv=document.getElementById("sky"), ctx=cv.getContext("2d"), stars=[], raf=0;
